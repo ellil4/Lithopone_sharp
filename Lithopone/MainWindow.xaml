@@ -1,0 +1,10 @@
+﻿<Window x:Class="Lithopone.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="中国心理健康量表（老年版）" Height="600" Width="800" Loaded="Window_Loaded" SizeChanged="Window_SizeChanged" ResizeMode="NoResize">
+    <Grid Name="amGrid">
+        <ScrollViewer Height="561" HorizontalAlignment="Right" Name="amScrollViewer" VerticalAlignment="Top" Width="778">
+            <Canvas Name="amCanvas" Width="778" Background="White"></Canvas>
+        </ScrollViewer>
+    </Grid>
+</Window>
