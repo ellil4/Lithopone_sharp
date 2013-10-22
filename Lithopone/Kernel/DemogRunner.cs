@@ -10,15 +10,15 @@ using Lithopone.UIComponents;
 namespace Lithopone.Kernel
 {
 
-    class DemogRunner
+    public class DemogRunner
     {
-        MainWindow mMW;
+        DemogWindow mMW;
 
         private List<LINETYPE> mLinetypes;
         private List<String> mVarNames;
         public static String DEMOG_FILENAME = "demog.xml";
 
-        public DemogRunner(MainWindow mw)
+        public DemogRunner(DemogWindow mw)
         {
             mMW = mw;
             mLinetypes = new List<LINETYPE>();
@@ -30,11 +30,8 @@ namespace Lithopone.Kernel
             AddTextField("请在下面填写个人信息", "", 0, "TITLE");
         }
 
-        public void GenFromFile(String filename)
+        public void GenUI(Dictionary<int, StDemogLine> lines)
         {
-            Lithopone.FileReader.DemogXmlReader rd = new FileReader.DemogXmlReader();
-            Dictionary<int, StDemogLine> lines = rd.GetDemogItems(filename);
-
             addTitle();
 
             for (int i = 0; i < lines.Count; i++)
@@ -69,8 +66,8 @@ namespace Lithopone.Kernel
 
             CompButton btnSubmmit = new CompButton("提交");
 
-            int btnWidth = 90;
-            int btnHeight = 25;
+            int btnWidth = 100;
+            int btnHeight = 40;
             int btnUpGap = 31;
             int btnDownGap = 10;
             
@@ -78,7 +75,7 @@ namespace Lithopone.Kernel
             btnSubmmit.Width = btnWidth;
             btnSubmmit.Height = btnHeight;
             btnSubmmit.amButton.Height = btnHeight;
-            btnSubmmit.amButton.FontSize = 13;
+            btnSubmmit.amButton.FontSize = 18;
 
             btnSubmmit.SetBehavior(Submmit);
             mMW.amCanvas.Children.Add(btnSubmmit);
@@ -87,20 +84,18 @@ namespace Lithopone.Kernel
                 (mMW.amCanvas.Children.Count - 1) * 
                 (KernelLib.LINE_HEIGHT + KernelLib.LINE_GAP) + btnUpGap);
 
-            Canvas.SetLeft(btnSubmmit,
-                (MainWindow.CANVAS_SIZE_W - CompButton.WIDTH) / 2);
+            Canvas.SetRight(btnSubmmit, 25);
 
             int neededHeight = mMW.amCanvas.Children.Count * 
                 (KernelLib.LINE_HEIGHT + KernelLib.LINE_GAP) + btnHeight + btnUpGap + btnDownGap;
 
-            if (neededHeight > MainWindow.CANVAS_SIZE_H)
+            if (neededHeight > mMW.amCanvas.Height)
             {
                 mMW.amCanvas.Height = neededHeight;
             }
-            else
-            {
-                mMW.Height = neededHeight + btnDownGap;
-            }
+
+            mMW.Height = neededHeight + btnDownGap;
+            
         }
 
         public void Submmit()
@@ -119,7 +114,7 @@ namespace Lithopone.Kernel
             label.Content = text;
             label.Width = text.Length * KernelLib.CHARA_WIDTH + 20;
             label.Height = KernelLib.LINE_HEIGHT;
-            label.FontSize = 12;
+            label.FontSize = KernelLib.DEMOG_FONT_SIZE;
 
             pane.Children.Add(label);
         }
@@ -143,8 +138,8 @@ namespace Lithopone.Kernel
             }
 
             cb.Height = KernelLib.LINE_HEIGHT;
-            cb.Width = KernelLib.CHARA_WIDTH * longest;
-            cb.FontSize = 12;
+            cb.Width = KernelLib.CHARA_WIDTH * longest + 10;
+            cb.FontSize = KernelLib.DEMOG_FONT_SIZE;
 
             pane.Children.Add(cb);
         }
@@ -154,7 +149,7 @@ namespace Lithopone.Kernel
             TextBox tb = new TextBox();
             tb.Width = width;
             tb.Height = KernelLib.LINE_HEIGHT;
-            tb.FontSize = 12;
+            tb.FontSize = KernelLib.DEMOG_FONT_SIZE;
 
             pane.Children.Add(tb);
         }
@@ -168,7 +163,8 @@ namespace Lithopone.Kernel
                 {
                     RadioButton rb = new RadioButton();
                     rb.Content = selections[i] + " ";
-                    rb.Height = 16;
+                    rb.Height = KernelLib.LINE_HEIGHT;
+                    rb.FontSize = KernelLib.DEMOG_FONT_SIZE;
                     sp.Children.Add(rb);
                 }
             }
@@ -248,7 +244,10 @@ namespace Lithopone.Kernel
             {
                 case LINETYPE.COMBO:
                     ComboBox cb = (ComboBox)sp.Children[1];
-                    value = cb.SelectedIndex.ToString();
+                    if (cb.SelectedIndex != -1)
+                    {
+                        value = (String)cb.Items[cb.SelectedIndex];
+                    }
                     break;
                 case LINETYPE.TXTFIELD:
                     TextBox tb = (TextBox)sp.Children[1];
@@ -266,7 +265,19 @@ namespace Lithopone.Kernel
                     break;
             }
 
-            retval = new StGeneralInfo(value, mVarNames[index]);
+            if (String.IsNullOrEmpty(value) || String.IsNullOrWhiteSpace(value))
+            {
+                System.Windows.Forms.MessageBox.Show(
+                    "请完整填写所有信息", "提示",
+                    System.Windows.Forms.MessageBoxButtons.OK,
+                    System.Windows.Forms.MessageBoxIcon.Information);
+                retval = null;
+            }
+            else
+            {
+                retval = new StGeneralInfo(value, mVarNames[index]);
+            }
+
             return retval;
         }
 
@@ -282,6 +293,11 @@ namespace Lithopone.Kernel
                 if (info != null)
                 {
                     retval.Add(info.Name, info.Value);
+                }
+                else
+                {
+                    retval = null;
+                    break;
                 }
             }
 

@@ -37,7 +37,7 @@ namespace Arora
             {
                 totalArr[i] = i;
             }
-            StNorm total = new StNorm("total", 194.583, 6.167, totalArr);
+            StNorm total = new StNorm("total", 194.583, 30.155, totalArr);
 
             norm.Add(social);
             norm.Add(recog);

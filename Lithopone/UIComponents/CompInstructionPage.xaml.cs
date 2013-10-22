@@ -11,6 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Lithopone.Kernel;
 
 namespace Lithopone.UIComponents
 {
@@ -19,9 +20,25 @@ namespace Lithopone.UIComponents
     /// </summary>
     public partial class CompInstructionPage : UserControl
     {
-        public CompInstructionPage()
+        public TestRunner mTestRunner;
+        public CompInstructionPage(TestRunner tr, int sizeX, int sizeY)
         {
             InitializeComponent();
+            mTestRunner = tr;
+
+            this.Width = sizeX;
+            this.Height = sizeY;
+
+            amTitleLabel.Width = sizeX;
+            amInstructionText.Width = sizeX;
+            amInstructionText.Height = sizeY - 52 - 2 * 10;
+            Canvas.SetTop(amOKBtn, sizeY - 52 - 20);
+            Canvas.SetLeft(amOKBtn, (sizeX - 122) / 2);
+        }
+
+        private void amOKBtn_Click(object sender, RoutedEventArgs e)
+        {
+            mTestRunner.StartTest();
         }
     }
 }

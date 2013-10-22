@@ -11,6 +11,7 @@ namespace Lithopone.Memory
         public int ID;
         public String Name;
         public String Description;
+        public String Instruction;
 
         public bool TextSelection;
         public bool TextCausal;

@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arora", "LithoponeReportDLL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memory", "Memory\Memory.csproj", "{BC97D70C-C51D-4D3C-8123-FB3596EA164F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibTabCharter", "..\LibTabCharter\LibTabCharter\LibTabCharter.csproj", "{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NormDistributionLib", "..\NormDistributionLib\NormDistributionLib\NormDistributionLib.csproj", "{DAD36F59-8147-4CBB-861C-F7EBF1070E00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibTabCharter", "..\LibCharter\LibTabCharter\LibTabCharter.csproj", "{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,16 +51,6 @@ Global
 		{BC97D70C-C51D-4D3C-8123-FB3596EA164F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{BC97D70C-C51D-4D3C-8123-FB3596EA164F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{BC97D70C-C51D-4D3C-8123-FB3596EA164F}.Release|x86.ActiveCfg = Release|Any CPU
-		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
-		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Debug|Mixed Platforms.Build.0 = Debug|x86
-		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Debug|x86.ActiveCfg = Debug|x86
-		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Debug|x86.Build.0 = Debug|x86
-		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Release|Any CPU.ActiveCfg = Release|x86
-		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Release|Mixed Platforms.ActiveCfg = Release|x86
-		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Release|Mixed Platforms.Build.0 = Release|x86
-		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Release|x86.ActiveCfg = Release|x86
-		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Release|x86.Build.0 = Release|x86
 		{DAD36F59-8147-4CBB-861C-F7EBF1070E00}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{DAD36F59-8147-4CBB-861C-F7EBF1070E00}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{DAD36F59-8147-4CBB-861C-F7EBF1070E00}.Debug|Mixed Platforms.Build.0 = Debug|x86
@@ -71,6 +61,16 @@ Global
 		{DAD36F59-8147-4CBB-861C-F7EBF1070E00}.Release|Mixed Platforms.Build.0 = Release|x86
 		{DAD36F59-8147-4CBB-861C-F7EBF1070E00}.Release|x86.ActiveCfg = Release|x86
 		{DAD36F59-8147-4CBB-861C-F7EBF1070E00}.Release|x86.Build.0 = Release|x86
+		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Debug|x86.ActiveCfg = Debug|x86
+		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Debug|x86.Build.0 = Debug|x86
+		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Release|Any CPU.ActiveCfg = Release|x86
+		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Release|Mixed Platforms.Build.0 = Release|x86
+		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Release|x86.ActiveCfg = Release|x86
+		{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

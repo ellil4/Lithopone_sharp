@@ -11,8 +11,9 @@ namespace Lithopone.Kernel
     public class KernelLib
     {
 
-        public static int LINE_HEIGHT = 28;
-        public static int CHARA_WIDTH = 13;
+        public static int LINE_HEIGHT = 35;
+        public static int CHARA_WIDTH = 18;
+        public static int DEMOG_FONT_SIZE = 18;
 
         public static int STACKPANE_WIDTH = 760;
 

@@ -19,19 +19,28 @@ namespace Lithopone.UIComponents
     /// </summary>
     public partial class CompText : UserControl
     {
-        public static int HEIGHT = 38;
+        public static int HEIGHT = 53;
+        public int mWidth;
+        public MainWindow mMW;
 
         public CompText()
         {
             InitializeComponent();
+        }
+
+        public CompText(MainWindow mw, int width)
+        {
+            InitializeComponent();
             BorderBrush = new SolidColorBrush(Color.FromRgb(255, 255, 255));
+            mMW = mw;
+            mWidth = width;
         }
 
         public void SetText(String text)
         {
-            amLabel.Content = text;
-            amLabel.Width = text.Length * 15 + 22;
-            this.Width = text.Length * 15 + 22;
+            amLabel.Text = text;
+            amLabel.Width = mWidth;
+            this.Width = mWidth;
         }
     }
 }

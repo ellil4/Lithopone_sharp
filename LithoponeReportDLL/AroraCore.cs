@@ -2,108 +2,182 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms;
 using Lithopone.Memory;
 using System.IO;
-using System.Windows.Forms.DataVisualization.Charting;
-using System.Drawing;
+using LibTabCharter;
+using NormDistributionLib;
 
-//PTSD Double Test
 namespace Arora
 {
-    public class AroraCore : AroraCoreBase
+    //calculating and saving the scores
+    public class AroraCore
     {
-        protected static String OUT_PATH_SPECIFIC =
-            AppDomain.CurrentDomain.BaseDirectory + "\\AroraAppendableSpecific";
+        public static String OUT_PATH = 
+            AppDomain.CurrentDomain.BaseDirectory + "AroraAppendableGeneral";
 
-        public AroraCore(ReportForm rf) : base(rf)
+        protected Dictionary<int, StItem> mItems;
+        protected List<StAnswer> mAnswers;
+        protected Dictionary<String, String> mDemogInfo;
+        protected List<StNorm> mNorm;
+        
+        protected List<float> mDimzScores;
+        protected List<double> mDimzPercentile;
+
+
+        //must override
+        //abstract public void DoReport();
+        
+        //abstract protected void ReadResultForm();
+
+        public AroraCore()
         {
-
+            mDimzPercentile = new List<double>();
+            mDimzScores = new List<float>();
         }
 
-        public override void Run()
+        public void SetData(Dictionary<int, StItem> items, List<StAnswer> answers,
+            Dictionary<String, String> demogInfo, List<StNorm> norm)
         {
-            //calc
-            calcNormRelatedResult();
-
-            ShowReport();
-
+            mItems = items;
+            mAnswers = answers;
+            mDemogInfo = demogInfo;
+            mNorm = norm;
         }
 
-        protected override void ShowReport()
+        private List<String> genHeader()
         {
-            NormDistriBarviewGen.SetChart(mRF.amChart1, (int)(Math.Round(mDimzPercentile[5] * 100.0)), 
-                Color.FromArgb(255, 0, 0), Color.FromArgb(0, 0, 255));
-            mRF.label1.Text = ("总得分高于%" +
-                ((int)(Math.Round(mDimzPercentile[5] * 100.0))).ToString() + "的人群(红色部分)");
+            List<String> header = new List<string>();
+            for (int i = 0; i < mDemogInfo.Count; i++)
+                header.Add(mDemogInfo.ElementAt(i).Key);
 
-            NormDistriBarviewGen.SetChart(mRF.amChart2, (int)(Math.Round(mDimzPercentile[0] * 100.0)),
-                Color.FromArgb(255, 0, 0), Color.FromArgb(0, 0, 255));
-            mRF.label2.Text = ("社会得分高于%" + 
-                ((int)(Math.Round(mDimzPercentile[0] * 100.0))).ToString() + "的人群(红色部分)");
+            header.Add("TimeStamp");
 
-            NormDistriBarviewGen.SetChart(mRF.amChart3, (int)(Math.Round(mDimzPercentile[1] * 100.0)),
-                Color.FromArgb(255, 0, 0), Color.FromArgb(0, 0, 255));
-            mRF.label3.Text = ("认知得分高于%" +
-                ((int)(Math.Round(mDimzPercentile[1] * 100.0))).ToString() + "的人群(红色部分)");
-
-            NormDistriBarviewGen.SetChart(mRF.amChart4, (int)(Math.Round(mDimzPercentile[2] * 100.0)),
-                Color.FromArgb(255, 0, 0), Color.FromArgb(0, 0, 255));
-            mRF.label4.Text = ("适应得分高于%" +
-                ((int)(Math.Round(mDimzPercentile[2] * 100.0))).ToString() + "的人群(红色部分)");
-
-            NormDistriBarviewGen.SetChart(mRF.amChart5, (int)(Math.Round(mDimzPercentile[3] * 100.0)),
-                Color.FromArgb(255, 0, 0), Color.FromArgb(0, 0, 255));
-            mRF.label5.Text = ("自我得分高于%" +
-                ((int)(Math.Round(mDimzPercentile[3] * 100.0))).ToString() + "的人群(红色部分)");
-
-            NormDistriBarviewGen.SetChart(mRF.amChart6, (int)(Math.Round(mDimzPercentile[4] * 100.0)),
-                Color.FromArgb(255, 0, 0), Color.FromArgb(0, 0, 255));
-            mRF.label6.Text = ("情绪得分高于%" +
-                ((int)(Math.Round(mDimzPercentile[4] * 100.0))).ToString() + "的人群(红色部分)");
-
-            //validity
-            int totalDiff = 0;
-            if (GetSingleItemScore(mItems, mAnswers, 3) != GetSingleItemScore(mItems, mAnswers, 59))
-                totalDiff++;
-            if (GetSingleItemScore(mItems, mAnswers, 40) != GetSingleItemScore(mItems, mAnswers, 6))
-                totalDiff++;
-            if (GetSingleItemScore(mItems, mAnswers, 55) != GetSingleItemScore(mItems, mAnswers, 33))
-                totalDiff++;
-
-            int totalStandardScore = (int)Math.Round((mDimzScores[5] - 194.583) / 6.617 * 100 + 500);
-            mOtherInfo = totalStandardScore.ToString();
-
-            if (totalDiff > 1)//invalid
+            for (int i = 0; i < mAnswers.Count; i++)
             {
-                mRF.richTextBox1.Text = "题目回答一致性不足。";
+                header.Add( i + "selected");
+                //header.Add(i + "RT");
+                header.Add(i + "value");
+            }
+
+            for (int i = 0; i < mNorm.Count; i++)
+            {
+                header.Add(mNorm[i].KEY + "_Socre");
+                header.Add(mNorm[i].KEY + "_Percentile");
+            }
+
+            header.Add("Total_C_Score");
+            header.Add("Validity");
+
+            return header;
+        }
+
+        protected bool TestValid()
+        {
+            int TotalDiff = 0;
+            //validity
+            if (GetSingleItemScore(mItems, mAnswers, 3) != GetSingleItemScore(mItems, mAnswers, 59))
+                TotalDiff++;
+            if (GetSingleItemScore(mItems, mAnswers, 40) != GetSingleItemScore(mItems, mAnswers, 6))
+                TotalDiff++;
+            if (GetSingleItemScore(mItems, mAnswers, 55) != GetSingleItemScore(mItems, mAnswers, 33))
+                TotalDiff++;
+
+            if (TotalDiff > 1)
+                return false;
+            else
+                return true;
+        }
+
+        virtual protected void WriteFile(String path)
+        {
+            TabCharter ltc = new TabCharter(path);
+
+            if (!File.Exists(path))
+            {
+                ltc.Create(genHeader());
+            }
+
+            //demog info
+            List<String> line = new List<string>();
+            for (int i = 0; i < mDemogInfo.Count; i++)
+            {
+                line.Add(mDemogInfo.ElementAt(i).Value);
+            }
+
+            DateTime dt = DateTime.Now;
+            line.Add(dt.Year + "-" + dt.Month + "-" + dt.Day + " " + 
+                dt.Hour + ":" + dt.Minute + ":" + dt.Second);
+
+            //items` info
+            for (int i = 0; i < mAnswers.Count; i++)
+            {
+                line.Add(mAnswers[i].Selected.ToString());
+                //line.Add(mAnswers[i].RT.ToString());
+                line.Add(GetSingleItemScore(mItems, mAnswers, i).ToString());
+            }
+
+            //norm info
+            for (int i = 0; i < mNorm.Count; i++ )
+            {
+                line.Add(mDimzScores[i].ToString());
+                line.Add(mDimzPercentile[i].ToString());
+            }
+
+            int TotalStandardScore = (int)Math.Round((mDimzScores[5] - 194.583) / 6.617 * 100 + 500);
+            line.Add(TotalStandardScore.ToString());
+
+            line.Add(TestValid().ToString());
+
+            ltc.Append(line);
+        }
+
+        protected void calcNormRelatedResult()
+        {
+            float singleNormScore = 0;
+            for (int i = 0; i < mNorm.Count; i++)
+            {
+                singleNormScore = GetSingleDimensionzScore(mItems, mAnswers, mNorm[i]);
+                mDimzScores.Add(singleNormScore);
+                mDimzPercentile.Add(DifferenceIntegrate.GetSpecificAreaSize(
+                    1000000, mNorm[i].Mean, mNorm[i].SD, mNorm[i].Mean - 4 * mNorm[i].SD, 
+                    singleNormScore));
+            }
+        }
+
+        virtual public void Sta_Save()
+        {
+            calcNormRelatedResult();
+            WriteFile(OUT_PATH);
+        }
+
+        public float GetSingleDimensionzScore(
+            Dictionary<int, StItem> item, List<StAnswer> answer, StNorm norm)
+        {
+            float retval = 0;
+            int itemNumBuf = 0;
+
+            for (int i = 0; i < norm.ItemIDs.Length; i++)
+            {
+                //get index in norm
+                itemNumBuf = norm.ItemIDs[i];
+                //get certain index`s selection value added to return value
+                retval += item[itemNumBuf].Selections[answer[itemNumBuf].Selected].Value;
+            }
+
+            return retval;
+        }
+
+        public float GetSingleItemScore(
+            Dictionary<int, StItem> item, List<StAnswer> answer, int index)
+        {
+            if (answer[index].Selected != -1)
+            {
+                return item[index].Selections[answer[index].Selected].Value;
             }
             else
             {
-                String textShow = "总得分：" + totalStandardScore +　"。";
-                if (totalStandardScore > 600)
-                {
-                    textShow += "评价：认知效能较好；情绪积极、稳定，较善于调适；自我评价较恰当；人际关系较和谐，有一定的交往能力，社会支持较好；适应能力较好，能应对应激事件。建议：进一步巩固目前良好心理状态，提高心理健康水平。";
-                }
-                else if(totalStandardScore < 600 && totalStandardScore > 400)
-                {
-                    textShow += "评价：认知效能正常；情绪较积极、稳定，有一定的调适能力；自我评价尚恰当；人际关系尚和谐，交往能力和社会支持尚好；有一定的适应能力，能应对一般应激事件。建议：进行心理健康教育，学习心理学知识，促进心理能力的发展。进一步改善目前心理状态，提高心理健康水平。";
-                }
-                else if(totalStandardScore < 400 && totalStandardScore > 300)
-                {
-                    textShow += "评价：认知效能较低；情绪较不稳定，调适能力较差；自我评价较不恰当，容易低估自己；人际关系、交往能力和社会支持较差；适应能力也较差，较难应对应激事件，耐挫力和复原力较弱。这些均表明受测者有轻度心理问题，面对压力或挫折时有一定风险。建议：除进行心理健康教育外，还应预防发生心理障碍，必要时进行心理疏导，改善其心理健康状况。";
-                }
-                else if(totalStandardScore < 300)
-                {
-                    textShow += "评价：认知效能低下；情绪消极、不稳定，调适能力差；缺乏自知之明，自我评价不恰当，往往低估自己；人际关系不良，交往能力和社会支持差；适应不良，不能应对应激事件，耐挫力和复原力弱。这些综合表明受测者存在明显心理问题。建议： 需尽早就医, 进行临床筛查和诊断，及时提供心理咨询与治疗。";
-                }
-
-                mRF.richTextBox1.Text = textShow;
-
-                WriteFile(OUT_PATH);
+                return 0;
             }
-
-            mRF.ShowDialog();
         }
     }
 }

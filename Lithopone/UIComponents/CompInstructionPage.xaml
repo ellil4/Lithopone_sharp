@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
-             d:DesignHeight="500" d:DesignWidth="748">
-    <Grid>
-        <Label Content="Label" Height="41" HorizontalAlignment="Left" Margin="12,12,12,0" Name="amTitleLabel" VerticalAlignment="Top" Width="724" FontSize="20" />
-        <TextBlock Height="413" HorizontalAlignment="Left" Margin="12,75,0,0" Name="amInstructionText" Text="TextBlockaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaaa" VerticalAlignment="Top" Width="724" FontSize="15" TextAlignment="Left" TextWrapping="Wrap" />
-    </Grid>
+             d:DesignHeight="397" d:DesignWidth="586" Background="{x:Null}">
+    <Canvas Height="399" HorizontalAlignment="Left" Margin="0" Name="amCanvas" VerticalAlignment="Top" Width="586" Background="{x:Null}">
+        <Label Content="Label" Height="41" HorizontalAlignment="Left" Margin="12,12,12,0" Name="amTitleLabel" VerticalAlignment="Top" Width="724" FontSize="26" />
+        <TextBlock Height="154" Name="amInstructionText" Text="TextBlockaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxaaaaa" Width="558" FontSize="32" TextAlignment="Left" TextWrapping="Wrap" Canvas.Left="14" Canvas.Top="91"/>
+        <Button Content="开始" Height="52" HorizontalAlignment="Left" Name="amOKBtn" VerticalAlignment="Bottom" Width="122" FontSize="26" Click="amOKBtn_Click" Canvas.Left="244" Canvas.Top="299" />
+    </Canvas>
 </UserControl>

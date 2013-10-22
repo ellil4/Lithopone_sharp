@@ -1,0 +1,14 @@
+﻿<Window x:Class="Lithopone.MainMenu"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="主菜单" Height="412" Width="696" WindowStartupLocation="CenterScreen" WindowStyle="ToolWindow" ResizeMode="NoResize">
+    <Grid>
+        <Rectangle Height="349" HorizontalAlignment="Left" Margin="12,12,0,0" Name="amRectIntro" Stroke="White" VerticalAlignment="Top" Width="214" Fill="#FFE5E5E5" StrokeDashOffset="0" StrokeStartLineCap="Flat" StrokeDashCap="Flat" StrokeThickness="5" MouseUp="amRectIntro_MouseUp" MouseEnter="amRectIntro_MouseEnter" MouseLeave="amRectIntro_MouseLeave" />
+        <Rectangle Height="118" HorizontalAlignment="Left" Margin="232,73,0,0" Name="amRectTest" Stroke="White" VerticalAlignment="Top" Width="430" Fill="#FFACF8A9" StrokeThickness="5" MouseUp="amRectTest_MouseUp" MouseEnter="amRectTest_MouseEnter" MouseLeave="amRectTest_MouseLeave" />
+        <Rectangle Height="164" HorizontalAlignment="Left" Margin="232,197,0,0" Name="amRectResult" Stroke="White" VerticalAlignment="Top" Width="430" Fill="#FFCBD4FF" StrokeThickness="5" MouseUp="amRectResult_MouseUp" MouseEnter="amRectResult_MouseEnter" MouseLeave="amRectResult_MouseLeave" />
+        <TextBlock Height="53" HorizontalAlignment="Left" Margin="56,144,0,0" Name="textBlock1" Text="测试说明" VerticalAlignment="Top" Width="132" FontSize="32" IsHitTestVisible="False" Foreground="#FF005F2D" />
+        <TextBlock FontSize="32" Height="53" HorizontalAlignment="Left" IsHitTestVisible="False" Margin="383,109,0,0" Name="textBlock2" Text="开始测试" VerticalAlignment="Top" Width="132" Foreground="#FF003B1A" />
+        <TextBlock FontSize="32" Height="53" HorizontalAlignment="Left" IsHitTestVisible="False" Margin="382,252,0,0" Name="textBlock3" Text="测试结果" VerticalAlignment="Top" Width="132" Foreground="#FF024B22" />
+        <TextBlock FontSize="32" Height="53" HorizontalAlignment="Left" IsHitTestVisible="False" Margin="244,14,0,0" Name="textBlock4" Text="中国心理健康量表（老年版）" VerticalAlignment="Top" Width="418" TextAlignment="Center" Background="{x:Null}" Foreground="#FF008D3E" FontStyle="Normal" FontWeight="Normal" />
+    </Grid>
+</Window>

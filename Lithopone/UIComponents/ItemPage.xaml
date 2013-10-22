@@ -1,0 +1,14 @@
+﻿<UserControl x:Class="Lithopone.UIComponents.ItemPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" 
+             d:DesignHeight="405" d:DesignWidth="586" xmlns:my="clr-namespace:Lithopone.UIComponents" Background="{x:Null}">
+    <Canvas HorizontalAlignment="Left" Name="amCanvas" VerticalAlignment="Top" Background="{x:Null}" OpacityMask="{x:Null}">
+        <Button Canvas.Left="490" Canvas.Top="312" Content="下一题" Height="44" Name="amBtnNext" Width="86" FontSize="20" Click="amBtnNext_Click" />
+        <Button Canvas.Left="387" Canvas.Top="312" Content="上一题" FontSize="20" Height="44" Name="amBtnPrev" Width="86" Click="amBtnPrev_Click" />
+        <TextBlock Canvas.Left="0" Canvas.Top="27" Height="47" Name="amStem" Text="TextBlock" FontSize="32" TextAlignment="Center" Width="586" />
+        <TextBlock Canvas.Left="157" Height="35" Name="amLabelPageNum" Text="TextBlock" FontSize="22" TextAlignment="Center" Width="275" Canvas.Top="362" />
+    </Canvas>
+</UserControl>

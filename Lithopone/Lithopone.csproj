@@ -16,6 +16,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -28,7 +29,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -54,10 +54,14 @@
   <PropertyGroup>
     <ApplicationIcon>ico.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Arora, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Arora.dll</HintPath>
+      <HintPath>..\LithoponeReportDLL\obj\Debug\Arora.dll</HintPath>
     </Reference>
     <Reference Include="Memory, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -82,8 +86,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DocManageWnd.xaml.cs">
+      <DependentUpon>DocManageWnd.xaml</DependentUpon>
+    </Compile>
     <Compile Include="FEITTimer.cs" />
     <Compile Include="FileReader\BinaryReaderBase.cs" />
+    <Compile Include="FileReader\ConfigCollection.cs" />
     <Compile Include="FileReader\DemogXmlReader.cs" />
     <Compile Include="FileReader\PackageReader.cs" />
     <Compile Include="FileReader\ResExtractor.cs" />
@@ -93,11 +101,15 @@
     <Compile Include="Kernel\TestRunner.cs" />
     <Compile Include="Lib.cs" />
     <Compile Include="FileReader\TestXmlReader.cs" />
+    <Compile Include="Settings.cs" />
     <Compile Include="UIComponents\CompGraph.xaml.cs">
       <DependentUpon>CompGraph.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIComponents\CompInstructionPage.xaml.cs">
       <DependentUpon>CompInstructionPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIComponents\CompSelection.xaml.cs">
+      <DependentUpon>CompSelection.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIComponents\CompSelectionGroup.cs" />
     <Compile Include="UIComponents\CompText.xaml.cs">
@@ -109,6 +121,25 @@
     <Compile Include="UIComponents\CompTextLarge.xaml.cs">
       <DependentUpon>CompTextLarge.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIComponents\DemogWindow.xaml.cs">
+      <DependentUpon>DemogWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIComponents\ItemPage.xaml.cs">
+      <DependentUpon>ItemPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainMenu.xaml.cs">
+      <DependentUpon>MainMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIComponents\ThanksPage.xaml.cs">
+      <DependentUpon>ThanksPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UIComponents\TitlePage.xaml.cs">
+      <DependentUpon>TitlePage.xaml</DependentUpon>
+    </Compile>
+    <Page Include="DocManageWnd.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -129,6 +160,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="UIComponents\CompSelection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UIComponents\CompText.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -140,6 +175,26 @@
     <Page Include="UIComponents\CompTextLarge.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UIComponents\DemogWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIComponents\ItemPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIComponents\ThanksPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UIComponents\TitlePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +246,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ico.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\LibCharter\LibTabCharter\LibTabCharter.csproj">
+      <Project>{6713CE43-DA29-49CC-AB3A-6ACFC7606EC1}</Project>
+      <Name>LibTabCharter</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

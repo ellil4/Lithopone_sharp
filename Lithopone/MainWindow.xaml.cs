@@ -14,6 +14,7 @@ using System.Windows.Shapes;
 using Lithopone.FileReader;
 using Lithopone.Kernel;
 using Lithopone.Memory;
+using Lithopone.UIComponents;
 using Arora;
 
 namespace Lithopone
@@ -26,65 +27,149 @@ namespace Lithopone
         static String BASEFOLER = AppDomain.CurrentDomain.BaseDirectory;
         int mCurTestIndex = 0;
 
-        Dictionary<String, String> mDemogInfo;
-        //List<StAnswer> mAnswers;
-        //Dictionary<int, StItem> mItems;
+        public Dictionary<String, String> mDemogInfo;
+        public Dictionary<int, StDemogLine> mDemogLines;
+
+        public int mScreenWidth, mScreenHeight;
 
         TestRunner mCurRunner;
-        DemogRunner mDemogRunner;
+        public DemogRunner mDemogRunner;
+        public StTestXmlHeader mTestHeader;
 
-        public static int CANVAS_SIZE_W = 778;
-        public static int CANVAS_SIZE_H = 561;
-        public static int WND_WIDTH = 800;
-        public static int WND_HEIGHT = 600;
-
-        public MainWindow()
+        public MainWindow(Dictionary<int, StDemogLine> DemogLine, StTestXmlHeader TestHeader)
         {
             InitializeComponent();
             this.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+
+            mDemogLines = DemogLine;
+            mTestHeader = TestHeader;
+        }
+
+        //prameters: element: the element to centralize, sizeX & sizeY: size of the element
+        public void centralize(UIElement element, int sizeX, int sizeY)
+        {
+            int screenX = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
+            int screenY = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
+            int offx = (screenX - sizeX) / 2;
+            int offy = (screenY - sizeY) / 2;
+            Canvas.SetTop(element, (double)offy);
+            Canvas.SetLeft(element, (double)offx);
+        }
+
+        public int getXScreenTaken()
+        {
+            return (int)(System.Windows.SystemParameters.PrimaryScreenWidth / 5 * 4);
+        }
+
+        public int getYScreenTaken()
+        {
+            return (int)(System.Windows.SystemParameters.PrimaryScreenHeight / 5 * 4);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            mDemogInfo = new Dictionary<string, string>();
-            mDemogRunner = new DemogRunner(this);
-            mDemogRunner.GenFromFile(Lib.DemogFileName);
+            mScreenWidth = (int)System.Windows.SystemParameters.PrimaryScreenWidth;
+            mScreenHeight = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
 
-            //adjustInnerComs();
+            TitlePage page = new TitlePage(this, getXScreenTaken(), getYScreenTaken());
+            page.amRichTxt.Document = new FlowDocument(new Paragraph(new Run(mTestHeader.Description)));
+            page.amTitleBlock.Text = mTestHeader.Name;
+            amCanvas.Children.Add(page);
+            centralize(page, getXScreenTaken(), getYScreenTaken());
 
+
+            //test below
+           /* AroraCore ac = new AroraCore(new ReportForm());
+            AroraNormFactory anf = new AroraNormFactory();
+            Dictionary<int, StItem> items = new Dictionary<int, StItem>();
+            List<StAnswer> answers = new List<StAnswer>();
+            for (int i = 0; i < 68; i++)
+            {
+                StAnswer answer = new StAnswer(0, 3);
+                answers.Add(answer);
+
+                Dictionary<int,StSelection> selections = new Dictionary<int,StSelection>();
+                for(int j = 0; j < 4; j++)
+                {
+                    selections.Add(j, new StSelection(0, (float)j, "aaa"));
+                }
+                StItem item = new StItem(i, "none", ref selections);
+                items.Add(i, item);
+            }
+            ac.SetData(items, answers, new Dictionary<String, String>(), anf.GetNorm());
+            ac.Run();*/
+
+            FullScreen();
+
+            //systest
+            /*AroraNormFactory anf = new AroraNormFactory();
+            AroraReport rep = new AroraReport(mDemogLines.Count, 68,
+                anf.GetNorm());
+
+            rep.DoReport();*/
+        }
+
+        public void FullScreen()
+        {
+            this.WindowState = System.Windows.WindowState.Normal;
+            this.WindowStyle = System.Windows.WindowStyle.None;
+            this.ResizeMode = System.Windows.ResizeMode.NoResize;
+            //this.Topmost = true;
+
+            this.Left = 0;
+            this.Top = 0;
+            this.Width = System.Windows.SystemParameters.PrimaryScreenWidth;
+            this.Height = System.Windows.SystemParameters.PrimaryScreenHeight;
+        }
+
+        public void OnTitleClose()
+        {
+            amCanvas.Children.Clear();
+            //mDemogInfo = new Dictionary<string, string>();
+            DemogWindow dw = new DemogWindow(this);
+            mDemogRunner = new DemogRunner(dw);
+
+            mDemogRunner.GenUI(mDemogLines);
+            dw.ShowDialog();
+        }
+
+        //how to call report
+        public void OnThanksClose()
+        {
+            AroraCore ac = new AroraCore();
+            AroraNormFactory anf = new AroraNormFactory();
+            ac.SetData(mCurRunner.mItemPage.mItems, mCurRunner.mAnswers, mDemogInfo, anf.GetNorm());
+            ac.Sta_Save();
+
+            AroraReport rep = new AroraReport(mDemogLines.Count, mCurRunner.mItemPage.mItems.Count,
+                anf.GetNorm());
+
+            rep.DoReport();
+
+            this.Close();
         }
 
         public void OnDemogClose()
         {
-            mDemogInfo = mDemogRunner.GetResult();
-
-            mCurRunner = new TestRunner(Lib.TestFileName, this);
-            mCurRunner.SetInstructionPage();
-            mCurTestIndex++;
+            if (mDemogInfo != null)
+            {
+                mCurRunner = new TestRunner(Lib.TestFileName, this);
+                mCurRunner.SetInstructionPage();
+                mCurTestIndex++;
+            }
         }
 
         public void OnTestClose()
         {
-            AroraCore ac = new AroraCore(new ReportForm());
-            AroraNormFactory anf = new AroraNormFactory();
-            ac.SetData(mCurRunner.mItemRunner.mItems, mCurRunner.mAnswers, mDemogInfo, anf.GetNorm());
-            ac.Run();
-            //Close();
+            ThanksPage page = new ThanksPage(this);
+            amCanvas.Children.Clear();
+            amCanvas.Children.Add(page);
+            Canvas.SetTop(page, 0);
+            Canvas.SetLeft(page, 0);
         }
 
         ~MainWindow()
         {
-        }
-
-        private void adjustInnerComs()
-        {
-            amScrollViewer.Width = this.Width - 16;
-            amCanvas.Width = this.Width - 16;
-        }
-
-        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            adjustInnerComs();
         }
     }
 }

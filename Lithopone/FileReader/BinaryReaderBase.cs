@@ -22,7 +22,7 @@ namespace Lithopone.FileReader
                 mFs = new FileStream(path, FileMode.Open, FileAccess.Read);
                 mBr = new BinaryReader(mFs);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 MessageBox.Show("源文件不存在");
                 System.Environment.Exit(0);

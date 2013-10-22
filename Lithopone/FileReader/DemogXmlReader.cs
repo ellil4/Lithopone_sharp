@@ -95,7 +95,7 @@ namespace Lithopone.FileReader
                     retval.Add(lineID, line);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 if (MessageBox.Show("人口学数据读取出错") == DialogResult.OK)
                 {

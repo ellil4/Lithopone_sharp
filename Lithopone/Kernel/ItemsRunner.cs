@@ -9,6 +9,10 @@ using Lithopone.FileReader;
 using System.IO;
 using System.Drawing;
 
+/*
+ * not in using anymore
+ */
+
 namespace Lithopone.Kernel
 {
     public class ItemsRunner
@@ -81,7 +85,7 @@ namespace Lithopone.Kernel
 
         private void layProgressText(int index)
         {
-            CompText ct = new CompText();
+            CompText ct = new CompText(mMainWindow, 10);
             ct.SetText("第" + (index + 1).ToString() + "题，共" + mItems.Count + "题");
             mMainWindow.amCanvas.Children.Add(ct);
             Canvas.SetTop(ct, mMainWindow.Height - 180);
@@ -105,7 +109,7 @@ namespace Lithopone.Kernel
 
             for (int i = 0; i < selection.Count; i++)
             {
-                CompText ct = new CompText();
+                CompText ct = new CompText(mMainWindow, 10);
                 ct.SetText(selection[i].Casual);
                 mMainWindow.amCanvas.Children.Add(ct);
                 Canvas.SetTop(ct, mVerTaken);
@@ -115,7 +119,7 @@ namespace Lithopone.Kernel
             }
 
 
-            mMainWindow.amCanvas.Height = mVerTaken + CompText.HEIGHT + 100;
+            //mMainWindow.Height = mVerTaken + CompText.HEIGHT + 100;
             mSelGrp.Set(list, UIselected);
         }
 

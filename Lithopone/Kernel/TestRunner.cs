@@ -13,25 +13,20 @@ namespace Lithopone.Kernel
 {
     public class TestRunner
     {
-        private StTestXmlHeader mTestAttr;
+        public StTestXmlHeader mTestAttr;
         private String mSrcPath;
 
-        public ItemsRunner mItemRunner;
+        public ItemPage mItemPage;
 
         public List<StAnswer> mAnswers;
         public MainWindow mMainWindow;
-
-        public CompButton mOkBtn, mPassBtn, mPrevBtn;
 
         //public static String BUFFER_FOLDER = AppDomain.CurrentDomain.BaseDirectory + "LithoponeBuf\\";
         //public static String XMLFILE_PATH = BUFFER_FOLDER + "test.xml";
 
         private FEITTimer mTimer;
 
-        private int mCurTill = 0;
-
-        public static int WINDOW_HEIGHT = 600;
-        public static int WINDOW_WIDTH = 800;
+        public int mCurTill = 0;
 
         public TestRunner(String srcPath, MainWindow mw)
         {
@@ -42,19 +37,7 @@ namespace Lithopone.Kernel
 
             mAnswers = new List<StAnswer>();
 
-            mOkBtn = new CompButton("下一题");
-            mOkBtn.SetBehavior(onOK);
-
-            mPrevBtn = new CompButton("上一题");
-            mPrevBtn.SetBehavior(onPrev);
-
-            /*mPassBtn = new CompButton("放弃");
-            mPassBtn.SetBehavior(onPass);*/
-
             mTimer = new FEITTimer();
-
-            mMainWindow.Height = WINDOW_HEIGHT;
-            mMainWindow.Width = WINDOW_WIDTH;
 
             startItemFileSystem();
         }
@@ -68,33 +51,40 @@ namespace Lithopone.Kernel
             Dictionary<int, StItem> items = xmlReader.GetItems();
             xmlReader.Finish();
             //itemsRunner
-            mItemRunner = new ItemsRunner(mMainWindow, items, this, mSrcPath);
+            mItemPage = new ItemPage(items, this,
+                mMainWindow.getXScreenTaken(), mMainWindow.getYScreenTaken());
             
-            if(mTestAttr.GraphicCasual || mTestAttr.GraphicSelection)
-                mItemRunner.OpenConnection();
+            /*if(mTestAttr.GraphicCasual || mTestAttr.GraphicSelection)
+                mItemRunner.OpenConnection();*/
         }
 
         public void SetInstructionPage()
         {
             mMainWindow.amCanvas.Children.Clear();
 
-            mMainWindow.amCanvas.Width = MainWindow.CANVAS_SIZE_W;
-            mMainWindow.amCanvas.Height = MainWindow.CANVAS_SIZE_H;
+            CompInstructionPage page = new CompInstructionPage(this,
+                mMainWindow.getXScreenTaken(), mMainWindow.getYScreenTaken());
 
-            CompInstructionPage page = new CompInstructionPage();
             page.amTitleLabel.Content = mTestAttr.Name;
-            page.amInstructionText.Text = mTestAttr.Description;
+            page.amInstructionText.Text = mTestAttr.Instruction;
             mMainWindow.amCanvas.Children.Add(page);
-
-            CompButton btn = new CompButton("开始");
-            mMainWindow.amCanvas.Children.Add(btn);
-            Canvas.SetLeft(btn, (mMainWindow.amCanvas.Width - CompButton.WIDTH) / 2);
-            Canvas.SetBottom(btn, CompButton.HEIGHT + 20);
-            btn.SetBehavior(startTest);
+            mMainWindow.centralize(page,
+                mMainWindow.getXScreenTaken(), mMainWindow.getYScreenTaken());
         }
 
-        private void startTest()
+        public void StartTest()
         {
+            //mMainWindow.Width = 590;
+            //mMainWindow.amScrollViewer.Width = 630;
+            //mMainWindow.Height = 430;
+            //mMainWindow.amScrollViewer.Height = 430;
+
+            mMainWindow.amCanvas.Children.Clear();
+            mMainWindow.amCanvas.Children.Add(mItemPage);
+            //centralize
+            mMainWindow.centralize(mItemPage,
+                mMainWindow.getXScreenTaken(), mMainWindow.getYScreenTaken());
+
             SetPage(0);
         }
 
@@ -109,17 +99,7 @@ namespace Lithopone.Kernel
                 uiSelected = mAnswers[index].Selected;
             }
 
-            mItemRunner.SetPage(index, uiSelected);
-            mMainWindow.amCanvas.Children.Add(mOkBtn);
-            mMainWindow.amCanvas.Children.Add(mPrevBtn);
-            //mMainWindow.amCanvas.Children.Add(mPassBtn);
-
-            Canvas.SetLeft(mPrevBtn, (mMainWindow.Width/ 2) - CompButton.WIDTH - 5);
-            Canvas.SetTop(mPrevBtn, mMainWindow.amCanvas.Height - CompButton.HEIGHT - 10);
-            Canvas.SetLeft(mOkBtn, (mMainWindow.Width / 2) + 5);
-            Canvas.SetTop(mOkBtn, mMainWindow.amCanvas.Height - CompButton.HEIGHT - 10);
-            //Canvas.SetLeft(mPassBtn, ((mMainWindow.Width - CompButton.WIDTH * 2 - 10)) / 2 + CompButton.WIDTH + 10);
-            //Canvas.SetTop(mPassBtn, mMainWindow.amCanvas.Height - CompButton.HEIGHT - 10)
+            mItemPage.SetPage(index, uiSelected);
 
             //set timer
             mTimer.Start();
@@ -130,76 +110,17 @@ namespace Lithopone.Kernel
             return mTestAttr;
         }
 
-        private void save()
+        public void Save()
         {
             if (mCurTill < mAnswers.Count)
             {
-                mAnswers[mCurTill].Selected = mItemRunner.mSelGrp.GetSelectedIndex();
+                mAnswers[mCurTill].Selected = mItemPage.amCompSelection.GetSelectedIndex();
                 mAnswers[mCurTill].RT = mTimer.GetElapsedTime();
             }
             else
             {
                 mAnswers.Add(new StAnswer(mTimer.GetElapsedTime(),
-                    mItemRunner.mSelGrp.GetSelectedIndex()));
-            }
-        }
-
-        private void onOK()
-        {
-            if (mItemRunner.mSelGrp.GetSelectedIndex() != -1)
-            {
-                save();
-
-                mCurTill++;
-
-                if (mCurTill < mTestAttr.ItemCount)
-                {
-                    SetPage(mCurTill);
-                }
-                else
-                {
-                    TestEnd();
-                }
-            }
-            else
-            {
-                MessageBox.Show("请做出选择");
-            }
-        }
-
-        private void onPrev()
-        {
-            if (mItemRunner.mSelGrp.GetSelectedIndex() != -1)
-            {
-                save();
-
-                if(mCurTill > 0)
-                    mCurTill--;
-
-                if (mCurTill > -1)
-                {
-                    SetPage(mCurTill);
-                }
-            }
-            else
-            {
-                MessageBox.Show("请做出选择");
-            }
-        }
-
-        private void onPass()
-        {
-            save();
-
-            mCurTill++;
-
-            if (mCurTill < mTestAttr.ItemCount)
-            {
-                SetPage(mCurTill);
-            }
-            else
-            {
-                TestEnd();
+                    mItemPage.amCompSelection.GetSelectedIndex()));
             }
         }
 
@@ -207,8 +128,8 @@ namespace Lithopone.Kernel
         {
             Console.WriteLine("TestEnd()");
 
-            if(mTestAttr.GraphicCasual || mTestAttr.GraphicSelection)
-                mItemRunner.CloseConnection();
+            /*if(mTestAttr.GraphicCasual || mTestAttr.GraphicSelection)
+                mItemRunner.CloseConnection();*/
 
             mMainWindow.OnTestClose();
         }

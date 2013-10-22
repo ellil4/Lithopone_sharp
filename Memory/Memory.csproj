@@ -45,6 +45,7 @@
     <Compile Include="Memory\StBlockDscription.cs" />
     <Compile Include="Memory\StDemogLine.cs" />
     <Compile Include="Memory\StDescription.cs" />
+    <Compile Include="Memory\StDocManageBriefInfo.cs" />
     <Compile Include="Memory\StGeneralInfo.cs" />
     <Compile Include="Memory\StItem.cs" />
     <Compile Include="Memory\StNorm.cs" />

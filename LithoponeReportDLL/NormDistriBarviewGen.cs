@@ -12,19 +12,29 @@ namespace Arora
     {
         static public void SetChart(Chart chart, int percentage, Color overcolor, Color belowcolor)
         {
-            Series serover = new Series("over");
-            serover.IsVisibleInLegend = false;
-            serover.ChartType = SeriesChartType.Column;
-            serover.BorderWidth = 3;
-            serover.ShadowOffset = 2;
-            serover.Color = overcolor;
+            chart.ChartAreas["ChartArea1"].Area3DStyle.Enable3D = true;
+            chart.ChartAreas["ChartArea1"].Area3DStyle.LightStyle = LightStyle.None;
+            chart.ChartAreas["ChartArea1"].Area3DStyle.Inclination = 0;
+            chart.ChartAreas["ChartArea1"].Area3DStyle.Perspective = 10;
+            chart.ChartAreas["ChartArea1"].BackColor = Color.FromArgb(255, 255, 255);
+            chart.ChartAreas["ChartArea1"].AxisX.Enabled = AxisEnabled.False;
+            chart.ChartAreas["ChartArea1"].AxisY.Enabled = AxisEnabled.False;
+            chart.ChartAreas["ChartArea1"].Area3DStyle.WallWidth = 0;
+            chart.ChartAreas["ChartArea1"].Area3DStyle.PointDepth = 1000;
 
             Series serbelow = new Series("below");
             serbelow.IsVisibleInLegend = false;
-            serbelow.ChartType = SeriesChartType.Column;
-            serbelow.BorderWidth = 3;
-            serbelow.ShadowOffset = 2;
+            serbelow.ChartType = SeriesChartType.Area;
+            serbelow.BorderWidth = 0;
+            serbelow.ShadowOffset = 3;
             serbelow.Color = belowcolor;
+
+            Series serover = new Series("over");
+            serover.IsVisibleInLegend = false;
+            serover.ChartType = SeriesChartType.Area;
+            serover.BorderWidth = 0;
+            serover.ShadowOffset = 3;
+            serover.Color = overcolor;
 
             int stepCount = 100;
 
@@ -46,8 +56,8 @@ namespace Arora
             }
 
             chart.Series.Clear();
-            chart.Series.Add(serover);
             chart.Series.Add(serbelow);
+            chart.Series.Add(serover);
         }
     }
 }

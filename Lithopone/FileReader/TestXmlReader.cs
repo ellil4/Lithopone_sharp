@@ -156,6 +156,10 @@ namespace Lithopone.FileReader
                 {
                     ret.Description = valueBuf;
                 }
+                else if (nameBuf.Equals("instruction"))
+                {
+                    ret.Instruction = valueBuf;
+                }
                 else if (nameBuf.Equals("casual_size"))
                 {
                     ret.CasualSize = Lib.Str2Size(valueBuf);
