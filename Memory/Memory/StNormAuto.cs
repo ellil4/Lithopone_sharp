@@ -7,13 +7,13 @@ namespace Lithopone.Memory
 {
     public class StNormAuto
     {
-        List<StNormDim> Dims;
-        StNormValidity Validity;
+        public List<StNormDim> Dims;
+        public StNormValidity Validity;
 
         public StNormAuto()
         {
             Dims = new List<StNormDim>();
-            Validity = null;
+            Validity = new StNormValidity();
         }
     }
 }

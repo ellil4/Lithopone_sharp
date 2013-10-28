@@ -28,21 +28,18 @@ namespace Lithopone
         int mCurTestIndex = 0;
 
         public Dictionary<String, String> mDemogInfo;
-        public Dictionary<int, StDemogLine> mDemogLines;
+        public DemogRunner mDemogRunner;
 
         public int mScreenWidth, mScreenHeight;
 
         TestRunner mCurRunner;
-        public DemogRunner mDemogRunner;
-        public StTestXmlHeader mTestHeader;
+        public ConfigCollection mConfigCollection;
 
-        public MainWindow(Dictionary<int, StDemogLine> DemogLine, StTestXmlHeader TestHeader)
+        public MainWindow(ConfigCollection confColl)
         {
             InitializeComponent();
             this.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
-
-            mDemogLines = DemogLine;
-            mTestHeader = TestHeader;
+            mConfigCollection = confColl;
         }
 
         //prameters: element: the element to centralize, sizeX & sizeY: size of the element
@@ -72,8 +69,9 @@ namespace Lithopone
             mScreenHeight = (int)System.Windows.SystemParameters.PrimaryScreenHeight;
 
             TitlePage page = new TitlePage(this, getXScreenTaken(), getYScreenTaken());
-            page.amRichTxt.Document = new FlowDocument(new Paragraph(new Run(mTestHeader.Description)));
-            page.amTitleBlock.Text = mTestHeader.Name;
+            page.amRichTxt.Document = 
+                new FlowDocument(new Paragraph(new Run(mConfigCollection.mTestInfo.Description)));
+            page.amTitleBlock.Text = mConfigCollection.mTestInfo.Name;
             amCanvas.Children.Add(page);
             centralize(page, getXScreenTaken(), getYScreenTaken());
 
@@ -129,7 +127,7 @@ namespace Lithopone
             DemogWindow dw = new DemogWindow(this);
             mDemogRunner = new DemogRunner(dw);
 
-            mDemogRunner.GenUI(mDemogLines);
+            mDemogRunner.GenUI(mConfigCollection.mDemogLines);
             dw.ShowDialog();
         }
 
@@ -137,12 +135,12 @@ namespace Lithopone
         public void OnThanksClose()
         {
             AroraCore ac = new AroraCore();
-            AroraNormFactory anf = new AroraNormFactory();
-            ac.SetData(mCurRunner.mItemPage.mItems, mCurRunner.mAnswers, mDemogInfo, anf.GetNorm());
+            ac.SetData(mCurRunner.mItemPage.mItems, 
+                mCurRunner.mAnswers, mDemogInfo, mConfigCollection.mNorms);
             ac.Sta_Save();
 
-            AroraReport rep = new AroraReport(mDemogLines.Count, mCurRunner.mItemPage.mItems.Count,
-                anf.GetNorm());
+            AroraReport rep = new AroraReport(mConfigCollection.mDemogLines.Count, 
+                mCurRunner.mItemPage.mItems.Count, mConfigCollection.mNorms);
 
             rep.DoReport();
 

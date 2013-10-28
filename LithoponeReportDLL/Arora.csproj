@@ -50,7 +50,6 @@
     <Compile Include="AroraAppendableGeneralReader.cs" />
     <Compile Include="AroraReport.cs" />
     <Compile Include="AroraCore.cs" />
-    <Compile Include="AroraNormFactory.cs" />
     <Compile Include="NormDistriBarviewGen.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

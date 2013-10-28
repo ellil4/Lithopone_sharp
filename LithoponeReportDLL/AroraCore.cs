@@ -18,10 +18,11 @@ namespace Arora
         protected Dictionary<int, StItem> mItems;
         protected List<StAnswer> mAnswers;
         protected Dictionary<String, String> mDemogInfo;
-        protected List<StNorm> mNorm;
+        protected StNormAuto mNorm;
         
         protected List<float> mDimzScores;
         protected List<double> mDimzPercentile;
+        protected List<double> mDimzStdScore;
 
 
         //must override
@@ -33,10 +34,11 @@ namespace Arora
         {
             mDimzPercentile = new List<double>();
             mDimzScores = new List<float>();
+            mDimzStdScore = new List<double>();
         }
 
         public void SetData(Dictionary<int, StItem> items, List<StAnswer> answers,
-            Dictionary<String, String> demogInfo, List<StNorm> norm)
+            Dictionary<String, String> demogInfo, StNormAuto norm)
         {
             mItems = items;
             mAnswers = answers;
@@ -59,13 +61,13 @@ namespace Arora
                 header.Add(i + "value");
             }
 
-            for (int i = 0; i < mNorm.Count; i++)
+            for (int i = 0; i < mNorm.Dims.Count; i++)
             {
-                header.Add(mNorm[i].KEY + "_Socre");
-                header.Add(mNorm[i].KEY + "_Percentile");
+                header.Add(mNorm.Dims[i].Name + "_Socre");
+                header.Add(mNorm.Dims[i].Name + "_Percentile");
+                header.Add(mNorm.Dims[i].Name + "_StdScore");
             }
 
-            header.Add("Total_C_Score");
             header.Add("Validity");
 
             return header;
@@ -74,15 +76,29 @@ namespace Arora
         protected bool TestValid()
         {
             int TotalDiff = 0;
-            //validity
-            if (GetSingleItemScore(mItems, mAnswers, 3) != GetSingleItemScore(mItems, mAnswers, 59))
-                TotalDiff++;
-            if (GetSingleItemScore(mItems, mAnswers, 40) != GetSingleItemScore(mItems, mAnswers, 6))
-                TotalDiff++;
-            if (GetSingleItemScore(mItems, mAnswers, 55) != GetSingleItemScore(mItems, mAnswers, 33))
-                TotalDiff++;
 
-            if (TotalDiff > 1)
+            //validity with principal
+            for (int i = 0; i < mNorm.Validity.ItemIndex.Count / 2; i += 2)
+            {
+                if (mNorm.Validity.Principal == ValidityPrincipal.IndexEqual)
+                {
+                    if (mAnswers[mNorm.Validity.ItemIndex[i]] !=
+                        mAnswers[mNorm.Validity.ItemIndex[i + 1]])
+                    {
+                        TotalDiff++;
+                    }
+                }
+                else if (mNorm.Validity.Principal == ValidityPrincipal.ValueEqual)
+                {
+                    if (GetSingleItemScore(mItems, mAnswers, mNorm.Validity.ItemIndex[i]) !=
+                        GetSingleItemScore(mItems, mAnswers, mNorm.Validity.ItemIndex[i + 1]))
+                    {
+                        TotalDiff++;
+                    }
+                }
+            }
+
+            if (TotalDiff >= mNorm.Validity.Tolerance)
                 return false;
             else
                 return true;
@@ -117,29 +133,58 @@ namespace Arora
             }
 
             //norm info
-            for (int i = 0; i < mNorm.Count; i++ )
+            for (int i = 0; i < mNorm.Dims.Count; i++ )
             {
                 line.Add(mDimzScores[i].ToString());
                 line.Add(mDimzPercentile[i].ToString());
+                line.Add(mDimzStdScore[i].ToString());
             }
-
-            int TotalStandardScore = (int)Math.Round((mDimzScores[5] - 194.583) / 6.617 * 100 + 500);
-            line.Add(TotalStandardScore.ToString());
 
             line.Add(TestValid().ToString());
 
             ltc.Append(line);
         }
 
+        protected void calculateStdScore()
+        {
+            for (int index = 0; index < mDimzScores.Count; index++)
+            {
+                double retval = mDimzScores[index];
+
+                for (int i = 0; i < mNorm.Dims[index].Method.Method.Count; i++)
+                {
+                    if (mNorm.Dims[index].Method.Method[i] == '+')
+                    {
+                        retval += mNorm.Dims[index].Method.Values[i];
+                    }
+                    else if (mNorm.Dims[index].Method.Method[i] == '-')
+                    {
+                        retval -= mNorm.Dims[index].Method.Values[i];
+                    }
+                    else if (mNorm.Dims[index].Method.Method[i] == '*')
+                    {
+                        retval *= mNorm.Dims[index].Method.Values[i];
+                    }
+                    else if (mNorm.Dims[index].Method.Method[i] == '/')
+                    {
+                        retval /= mNorm.Dims[index].Method.Values[i];
+                    }
+                }
+
+                mDimzStdScore.Add(retval);
+            }
+        }
+
+        //raw score and percentile
         protected void calcNormRelatedResult()
         {
             float singleNormScore = 0;
-            for (int i = 0; i < mNorm.Count; i++)
+            for (int i = 0; i < mNorm.Dims.Count; i++)
             {
-                singleNormScore = GetSingleDimensionzScore(mItems, mAnswers, mNorm[i]);
+                singleNormScore = GetSingleDimensionzScore(mItems, mAnswers, mNorm.Dims[i].ItemIndexList);
                 mDimzScores.Add(singleNormScore);
                 mDimzPercentile.Add(DifferenceIntegrate.GetSpecificAreaSize(
-                    1000000, mNorm[i].Mean, mNorm[i].SD, mNorm[i].Mean - 4 * mNorm[i].SD, 
+                    1000000, mNorm.Dims[i].Mean, mNorm.Dims[i].SD, mNorm.Dims[i].Mean - 4 * mNorm.Dims[i].SD, 
                     singleNormScore));
             }
         }
@@ -147,19 +192,20 @@ namespace Arora
         virtual public void Sta_Save()
         {
             calcNormRelatedResult();
+            calculateStdScore();
             WriteFile(OUT_PATH);
         }
 
         public float GetSingleDimensionzScore(
-            Dictionary<int, StItem> item, List<StAnswer> answer, StNorm norm)
+            Dictionary<int, StItem> item, List<StAnswer> answer, List<int> itemIndexList)
         {
             float retval = 0;
             int itemNumBuf = 0;
 
-            for (int i = 0; i < norm.ItemIDs.Length; i++)
+            for (int i = 0; i < itemIndexList.Count; i++)
             {
                 //get index in norm
-                itemNumBuf = norm.ItemIDs[i];
+                itemNumBuf = itemIndexList[i];
                 //get certain index`s selection value added to return value
                 retval += item[itemNumBuf].Selections[answer[itemNumBuf].Selected].Value;
             }

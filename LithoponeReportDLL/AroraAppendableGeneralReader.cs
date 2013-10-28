@@ -11,12 +11,12 @@ namespace Arora
     {
         public int mDemogLen;
         public int mTestCount;
-        public List<StNorm> mNorm;
+        public StNormAuto mNorm;
 
         private TabFetcher mFetch;
         private List<String> mLine;
 
-        public AroraAppendableGeneralReader(int DemogLen, int TestCount, List<StNorm> Norm)
+        public AroraAppendableGeneralReader(int DemogLen, int TestCount, StNormAuto Norm)
         {
             mFetch = new TabFetcher(AroraCore.OUT_PATH, "\\t");
 
@@ -41,12 +41,13 @@ namespace Arora
 
         public int GetRatingDimCount()
         {
-            return mNorm.Count;
+            return mNorm.Dims.Count;
         }
 
         private int getBaseOffset()
         {
             return mDemogLen + 1 + mTestCount * 2;
+            //demog + time + itemCount * 2(indexSel, value)
         }
 
         public double GetItemSelected(int Index)
@@ -61,22 +62,22 @@ namespace Arora
 
         public double GetDimScore(int Index)
         {
-            return double.Parse(mLine[getBaseOffset() + Index * 2]);
+            return double.Parse(mLine[getBaseOffset() + Index * 3]);
         }
 
         public double GetDimPercentile(int Index)
         {
-            return double.Parse(mLine[getBaseOffset() + Index * 2 + 1]);
+            return double.Parse(mLine[getBaseOffset() + Index * 3 + 1]);
         }
 
-        public double GetStandardScore()
+        public double GetDimStdScore(int Index)
         {
-            return double.Parse(mLine[getBaseOffset() + mNorm.Count * 2]);
+            return double.Parse(mLine[getBaseOffset() + Index * 3 + 2]);
         }
 
         public bool IsValid()
         {
-            return bool.Parse(mLine[getBaseOffset() + mNorm.Count * 2 + 1]);
+            return bool.Parse(mLine[getBaseOffset() + mNorm.Dims.Count * 3 + 1]);
         }
     }
 }

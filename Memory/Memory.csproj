@@ -49,6 +49,11 @@
     <Compile Include="Memory\StGeneralInfo.cs" />
     <Compile Include="Memory\StItem.cs" />
     <Compile Include="Memory\StNorm.cs" />
+    <Compile Include="Memory\StNormAuto.cs" />
+    <Compile Include="Memory\StNormDim.cs" />
+    <Compile Include="Memory\StNormLevel.cs" />
+    <Compile Include="Memory\StNormStdScoreMethod.cs" />
+    <Compile Include="Memory\StNormValidity.cs" />
     <Compile Include="Memory\StPFileInfo.cs" />
     <Compile Include="Memory\StRank.cs" />
     <Compile Include="Memory\StRankSpan.cs" />

@@ -10,7 +10,7 @@ namespace Lithopone.FileReader
     {
         public Dictionary<int, StDemogLine> mDemogLines;
         public StTestXmlHeader mTestInfo;
-        public List<StNorm> mNorms;
+        public StNormAuto mNorms;
 
         public ConfigCollection()
         {
@@ -23,7 +23,6 @@ namespace Lithopone.FileReader
             mTestInfo = xmlReader.GetHeader();
             xmlReader.Finish();
             //norm structure
-            Arora.AroraNormFactory nf = new Arora.AroraNormFactory();
             mNorms = nf.GetNorm();
         }
     }

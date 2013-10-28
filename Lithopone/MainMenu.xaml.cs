@@ -35,7 +35,7 @@ namespace Lithopone
 
         private void amRectTest_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            new MainWindow(mConfigs.mDemogLines, mConfigs.mTestInfo).Show();
+            new MainWindow(mConfigs).Show();
         }
 
         private void amRectResult_MouseUp(object sender, MouseButtonEventArgs e)
